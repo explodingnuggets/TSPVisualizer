@@ -102,11 +102,19 @@ class TSP():
             if self.next_node is not None:
                 index = self.disp_nodes.index(self.next_node)
                 self.disp_nodes.pop(index)
+            # Adiciona a distância ao total
+            if len(self.path) > 1:
+                if self.distance == float('inf'):
+                    self.distance = self.graph[self.path[-2]][self.path[-1]]['weight']
+                else:
+                    self.distance += self.graph[self.path[-2]][self.path[-1]]['weight']
+
             self.edge_colors()
             return True
         else:
             if self.path[0] != self.path[-1]:
                 self.path += (self.path[0],)
+                self.distance += self.graph[self.path[-2]][self.path[-1]]['weight']
                 self.edge_colors()
                 return True
             else:

@@ -7,8 +7,8 @@ It belongs to the class of NP-complete problems, meaning that the worst-case run
 
 So, we built a visualizer for the TSP, where, a random graph with 4 or 5 nodes is generated, and then, a step-by-step visualization of the problem being solved, is shown.The algorithms used to solve the problem are:
 
-    * Brute Force - O(n!): Where each permutation is tested, storing the path if it's optimal related to the past ones.
-    * ??? - O(?): ?
+* Brute Force - O(n!): Where each permutation is tested, storing the path if it's optimal related to the past ones.
+* Nearest Neighbor - O(n²): For each node, checks all it's neighbors that have not been visited yet, and finds the one with the least distance. Adds to the past. It's non-optimal, basing itself in heuristics.
 
 ## Installation
 
