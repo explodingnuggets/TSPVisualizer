@@ -16,11 +16,13 @@ class GraphApplication(tk.Frame):
 
         self.master.title('Traveling Salesman Problem - Examples')
 
+        self.tsp = tsp.TSP()
+
         self.step_counter = 0
         self.step_total = 0
         self.callback = None
 
-        self.tsp = tsp.TSP()
+        self.algo_stepfunction = self.tsp.step_bruteforce
 
         self.figure = Figure(figsize=(7, 5), dpi=100, tight_layout=True)
         self.axes = self.figure.add_subplot(111)
@@ -54,6 +56,9 @@ class GraphApplication(tk.Frame):
         self.reset_button = tk.Button(self.menu_frame, text='Reset', command=self.reset)
         self.reset_button.pack(side='left')
 
+        self.algo_button = tk.Button(self.menu_frame, text='Greedy', command=self.change_algo)
+        self.algo_button.pack(side='left')
+
         self.randomize_button = tk.Button(self.menu_frame, text='Randomize', command=self.randomize)
         self.randomize_button.pack(side='left')
 
@@ -67,12 +72,13 @@ class GraphApplication(tk.Frame):
         self.distance.pack(side='right')
 
     def step(self):
-        self.tsp.step_bruteforce()
-        self.step_counter += 1
+        step = self.algo_stepfunction()
+        if step:
+            self.step_counter += 1
         self.draw()
 
     def run(self):
-        step = self.tsp.step_bruteforce()
+        step = self.algo_stepfunction()
         if step:
             self.step_counter += 1
             self.callback = self.master.after(10, self.run)
@@ -94,9 +100,28 @@ class GraphApplication(tk.Frame):
     def randomize(self):
         self.tsp.random_graph()
         self.step_counter = 0
-        self.step_total = len(self.tsp.paths)
+        if self.tsp.algorithm == 0:
+            self.step_total = len(self.tsp.paths)
+        else:
+            self.step_total = len(self.tsp.disp_nodes)+2
         self.draw()
         self.stop()
+
+    def change_algo(self):
+        self.stop()
+        self.reset()
+        # Se está utilizando brute force, troca pro greedy e vice-versa
+        if self.tsp.algorithm == 0:
+            self.algo_stepfunction = self.tsp.step_nearest
+            self.tsp.algorithm = 1
+            self.algo_button.configure(text='Brute Force')
+            self.step_total = len(self.tsp.disp_nodes)+2
+        else:
+            self.algo_stepfunction = self.tsp.step_bruteforce
+            self.tsp.algorithm = 0
+            self.algo_button.configure(text='Greedy')
+            self.step_total = len(self.tsp.paths)
+        self.draw()
 
     def draw(self):
         self.counter_nodes_var.set('{}/{}'.format(self.step_counter, self.step_total))
